@@ -1,0 +1,37 @@
+# Create vault with needed variables and passwords
+---
+- hosts: localhost
+  vars:
+    vault_dir: ~/.ansible/vault
+    vault_file: ~/.ansible/vault/moose_accounts.yaml
+
+  roles:
+    - common
+
+  tasks:
+    - name: local username
+      command: id -un
+      register: username
+
+    - name: local user group
+      command: id -gn
+      register: usergroup
+
+    - name: Vault Directory
+      file: 
+        path: "{{ vault_dir }}"
+        state: directory
+        owner: "{{ username.stdout }}"
+        group: "{{ usergroup.stdout }}"
+        mode: '0700'
+
+    - name: Moose Accounts Vault File
+      template:
+        dest: "{{ vault_file }}"
+        owner: "{{ username.stdout }}"
+        group: "{{ usergroup.stdout }}"
+        mode: '0600'
+        src: moosejudge_password.j2
+
+        #    - name: Edit and encrypt
+        #      command: ansible-vault encrypt

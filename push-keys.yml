@@ -1,0 +1,15 @@
+---
+- name: Push Public SSH Key
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: 
+      authorized_key:
+        user: "{{ lookup('env', 'USER') }}"
+        state: present
+        key: "{{ item }}"
+      with_first_found:
+        - ~/.ssh/id_ecdsa.pub
+        - ~/.ssh/id_dsa.pub
+        - ~/.ssh/id_rsa.pub
