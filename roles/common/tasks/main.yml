@@ -1,2 +1,6 @@
 ---
-# tasks file for common
+# read user vault file or try default accounts
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ user_vault_file }}"
+    - default_accounts.yml

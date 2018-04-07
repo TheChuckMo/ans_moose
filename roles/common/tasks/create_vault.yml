@@ -1,0 +1,12 @@
+---
+- name: manage vault directory
+  file:
+    path: "{{ user_vault_file | basename }}"
+    state: directory
+    mode: 0700
+
+- name: user account vault template
+  template:
+    dest: "{{ user_vault_file | expanduser }}"
+    mode: 0600
+    src: user_account_vault.j2

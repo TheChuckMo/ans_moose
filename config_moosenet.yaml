@@ -1,0 +1,13 @@
+---
+- name: Manage moosenet Raspberry Pi 3
+  hosts: raspi
+  gather_facts: true
+
+  vars:
+    ipa_auto_enroll: yes
+
+  roles:
+    - common
+
+  tasks:
+

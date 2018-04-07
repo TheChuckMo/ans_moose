@@ -1,0 +1,24 @@
+---
+- name: user vagrant configuration
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    libvirt_uri: 'qemu+ssh://hv1/system' 
+    vagrant_pkgs: ['vagrant', 'vagrant-sshfs', 'vagrant-hostmanager']
+    libvirt_client_pkgs: ['libvirt-client']
+    vagrant_libvirt_pkgs: ['vagrant-libvirt', 'vagrant-lxc']
+
+  roles:
+    - common
+
+  tasks:
+    - name: vagrant packages
+      dnf: 
+        name: "{{ vagrant_pkgs }}"
+        state: latest
+
+    - name: vagrant libvirt support
+      dnf:
+        name: "{{ lookup('flatten', libvirt_client_pkgs, vagrant_libvirt_pkgs) }}"
+        state: latest

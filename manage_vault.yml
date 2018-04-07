@@ -1,0 +1,29 @@
+---
+- name: Manage user account vault
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    mode: create
+
+    user_vault_file: "{{ lookup('env', 'HOME') }}/.ansible/user_account_vault.yml"
+
+    accounts: 
+      - { name: 'moosehome', username: "{{ lookup('env', 'USER') }}", password: '' }
+      - { name: 'moosejudge', username: "{{ lookup('env', 'USER') }}", password: '' }
+
+  tasks:
+    - name: create user account vault
+      include_role:
+        name: common
+        tasks_from: create_vault.yml
+      when: mode == 'create'
+
+    - name: encrypt user account vault
+      command: ansible-vault encrypt {{ user_vault_file | expanduser }}
+      when: mode == 'encrypt'
+
+    - name: edit user account vault
+      command: ansible-vault edit {{ user_vault_file | expanduser }}
+      when: mode == 'edit'
+      

@@ -1,7 +1,0 @@
-# ipa real
-moosehome_username: "{{ vault_moosehome_username }}"
-moosehome_password: "{{ vault_moosehome_password }}"
-moosejudge_username: "{{ vault_moosejudge_username }}"
-moosejudge_password: "{{ vault_moosejudge_password }}"
-gmail_username: "{{ vault_gmail_username }}"
-gmail_password: "{{ vault_gmail_password }}"

@@ -2,14 +2,16 @@
 - name: Push Public SSH Key
   hosts: all
   gather_facts: false
-
+  vars:
+    ssh_public_key: https://github.com/thechuckmo.keys
+  roles:
+    - common
   tasks:
-    - name: 
+    - name:
       authorized_key:
-        user: "{{ lookup('env', 'USER') }}"
+        #user: "{{ lookup('env', 'USER') }}"
+        user: "{{ ansible_user }}"
         state: present
-        key: "{{ item }}"
-      with_first_found:
-        - ~/.ssh/id_ecdsa.pub
-        - ~/.ssh/id_dsa.pub
-        - ~/.ssh/id_rsa.pub
+        manage_dir: "yes"
+        key: "{{ ssh_public_key }}"
+        exclusive: "yes"
