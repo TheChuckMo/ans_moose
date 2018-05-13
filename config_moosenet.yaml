@@ -1,6 +1,7 @@
 ---
 - name: Manage moosenet Raspberry Pi 3
   hosts: raspi
+  remote_user: madmin
   gather_facts: true
 
   vars:
@@ -10,4 +11,14 @@
     - common
 
   tasks:
+    - name: puppet package
+      package:
+        name: puppet
+        state: installed
+
+    - name: puppet service
+      service:
+        name: puppet
+        enabled: yes
+        state: running
 

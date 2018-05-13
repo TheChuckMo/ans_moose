@@ -1,17 +1,15 @@
 ---
 - name: Push Public SSH Key
-  hosts: all
-  gather_facts: false
+  hosts: prd
+  gather_facts: yes
+  become: yes
   vars:
-    ssh_public_key: https://github.com/thechuckmo.keys
-  roles:
-    - common
+    mooseadmin_user: madmin
   tasks:
     - name:
       authorized_key:
-        #user: "{{ lookup('env', 'USER') }}"
-        user: "{{ ansible_user }}"
+        user: "{{ mooseadmin_user }}"
         state: present
-        manage_dir: "yes"
-        key: "{{ ssh_public_key }}"
-        exclusive: "yes"
+        manage_dir: yes
+        key: "{{ lookup('file', '/home/chuck/.ssh/id_ecdsa.pub') }}"
+        exclusive: no

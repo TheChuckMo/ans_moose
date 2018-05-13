@@ -1,1 +1,6 @@
 ---
+# joining client to freeipa domain
+- src: CTL-Fed-Security.freeipa-client
+  name: freeipa-client
+
+

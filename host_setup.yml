@@ -1,0 +1,35 @@
+---
+- name: host management setup
+  hosts: all
+  gather_facts: no
+  remote_user: root
+  vars:
+    admin: 
+      name: madmin
+      groups: [wheel]
+      password: '$6$j3/1DgL4C3fpa4XS$IKvloh6tr56DedB4Z1cDCAP0zOgnkoROCGja90CvhQK9wDEHDMZMvzCSvsQXO8z.GhdWcK95HAvTiU6JmDVEk/'
+      pubkeys: 
+        - 'ssh-dss AAAAB3NzaC1kc3MAAACBALm2heWH1kk0X7ghkZbhra34sxgMHR38sft2CVXih1gmXzTb9SgOvi3nnM7GxKOYLqTT4Nmalv8/lD11fWmW8XEt4zZl/0ZgnRhGWuD9P99+/BOVCJcV7JVvk17jr18pA8G6KFMo6u6jrgjq4eujgIO8LzcTun9151CP60ibkxS1AAAAFQDYHLbQkn+l03Kja5r+5wKrJJ3gDwAAAIAGN7flkE9RACgCct8C3awblhgLqfwmiftKonPCE/weMENA8mX8O3uXFMcpXtCDJnohV5Pa88KWJtFB6wEPQYp7BpdRXlQstP5wjRf2ILvumV5mgXMRJ3kDvdgHqwVgNS0y5WsywlqvisS3G/ysIcCjJ7WCd1weEBcoKRGl43brigAAAIEAntApfd35OueYYgX07z9wLPDp/0Nxp4loxy5vnNLdZCxH4s30ivVQwpCROFr8Wa4nRLnbPYUScifoQEti9AbIVipRGV0qD7ac72h80UPpkQZTclisDjPbD0Mxe+OQFh5LTiUeKzp7CL0tc5vyOqXEbMeH9Izg4FzmZDX+lDS0jYQ= madmin@home.moosejudge.com'
+        - 'ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHxoFn21IxqjNxFs6u0xuO0BZG2LcdxSL0RmKRVwNup/Xgdx82lhYGtPkTFlxt+BwwinwtZcnqyovUy7y4DHaMloADeBds1g330EhWTBfOvS9PrXHLQjomHGgYg S5J1GSnE1LwpQBAupv7KRN61NFtIzPGtbg2Djc9GxDPI4gSSbO+row== chuck@home.moosejudge.com'
+
+  tasks:
+    - name: Moosejudge admin user
+      user:
+        name: "{{ admin.name }}"
+        groups: "{{ admin.groups }}"
+        password: "{{ admin.password }}"
+
+    - name: Moosejudge admin public key
+      authorized_key:
+        user: "{{ admin.name }}"
+        manage_dir: yes
+        state: present
+        key: "{{ admin.pubkeys }}"
+        # with_items: "{{ admin.pubkeys }}"
+
+    - name: Moosejudge admin sudo
+      template: 
+        dest: /etc/sudoers.d/madmin.sudo
+        mode: 0640
+        src: madmin-sudo.j2
+        validate: visudo -c -f %s
