@@ -13,4 +13,5 @@
     - name: register certificate with IPA
       command: >
         {{ ipa_getcert_cmd }} request -r -k {{ ipa_getcert_ssl_key }} -f {{ ipa_getcert_ssl_cert }} -F {{ ipa_getcert_ssl_ca }}
-      creates: "{{ ipa_getcert_ssl_cert }}"
+      args:
+        creates: "{{ ipa_getcert_ssl_cert }}"
