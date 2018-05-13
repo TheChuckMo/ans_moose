@@ -4,10 +4,28 @@
 - name: Foreman configuration
   hosts: foreman
   gather_facts: yes
-  remote_user: madmin@home.moosejudge.com
   become: yes
   vars:
+    custom_server_ssl_key: "/etc/pki/tls/private/foreman_{{ inventory_hostname }}.key"
+    custom_server_ssl_cert: "/etc/pki/tls/certs/foreman_{{ inventory_hostname }}.cert"
+    custom_server_ssl_ca: "/etc/pki/tls/certs/foreman_{{ inventory_hostname }}.ca"
 
+    katello_repositories_version:
+    foreman_repositories_version:
+    foreman_installer_custom_hiera: |
+      foreman::ssl: true
+      puppet::server_foreman_ssl_ca: "{{ custom_server_ssl_ca }}"
+      foreman::server_ssl_key: "{{ custom_server_ssl_key }}"
+      foreman::server_ssl_cert: "{{ custom_server_ssl_cert }}"
+      foreman::server_ssl_chain: "{{ custom_server_ssl_ca }}"
+      foreman::servername: "{{ inventory_hostname }}"
+      foreman::foreman_url: "https://{{ inventory_hostname }}"
+      foreman::websockets_ssl_key: "{{ custom_server_ssl_key }}"
+      foreman::websockets_ssl_cert: "{{ custom_server_ssl_cert }}"
+  pre_tasks:
+    - name: IPA custom ssl certificates
+      command: >
+        ipa-getcert -k {{ custom_server_ssl_key }} -f
   roles:
     - role: epel_repositories
     - role: ostree_repositories
