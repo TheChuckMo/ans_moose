@@ -12,4 +12,4 @@
   tasks:
     - name: register cert
       command: >
-        "{{ ipa_getcert_cmd }} -N {{ ipa_getcert_app }} -r -k {{ ipa_getcert_ssl_key }} -f {{ ipa_getcert_ssl_cert }} -F {{ ipa_getcert_ssl_ca }}"
+        "{{ ipa_getcert_cmd }} request -N {{ ipa_getcert_app }} -r -k {{ ipa_getcert_ssl_key }} -f {{ ipa_getcert_ssl_cert }} -F {{ ipa_getcert_ssl_ca }}"
