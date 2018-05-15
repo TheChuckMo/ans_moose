@@ -6,9 +6,10 @@
   gather_facts: yes
   become: yes
   vars:
-    custom_server_ssl_key: "/etc/pki/tls/private/foreman_{{ inventory_hostname }}.key"
-    custom_server_ssl_cert: "/etc/pki/tls/certs/foreman_{{ inventory_hostname }}.cert"
-    custom_server_ssl_ca: "/etc/pki/tls/certs/foreman_{{ inventory_hostname }}.ca"
+    custom_server_ssl_key: "{{ ssl_foreman_privatekey }}"
+    custom_server_ssl_cert: "{{ ssl_foreman_certificate }}"
+    custom_server_ssl_ca: "{{ ssl_foreman_cachain }}"
+
 
     katello_repositories_version:
     foreman_repositories_version:
