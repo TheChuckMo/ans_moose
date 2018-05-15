@@ -1,12 +1,5 @@
 ---
 # tasks file for ipa-getcert
 - name: register certificate with IPA
-  command: >
-    {{ ipa_getcert_cmd }} request
-    {{ '-r' if item.renew else '-R' }}
-    -k {{ ipa_getcert_ssl_private_dir }}/{{ item.name }}_{{ inventory_hostname }}_key.pem
-    -f {{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_crt.pem
-    -F {{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_ca.pem
-  args:
-    creates: "{{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_crt.pem"
-  with_items: "{{ ipa_getcert_ssl_certs }}"
+  include_tasks: ipa-getcert_request.yml
+  with_items: "{{ ipa_getcert_ssl_certs|selectattr("request") }}"

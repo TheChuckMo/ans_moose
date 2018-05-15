@@ -6,6 +6,7 @@
   gather_facts: yes
   become: yes
   vars:
+    ipa_getcert_name: 'foreman'
     custom_server_ssl_key: "{{ ssl_foreman_privatekey }}"
     custom_server_ssl_cert: "{{ ssl_foreman_certificate }}"
     custom_server_ssl_ca: "{{ ssl_foreman_cachain }}"
@@ -23,11 +24,8 @@
       foreman::foreman_url: "https://{{ inventory_hostname }}"
       foreman::websockets_ssl_key: "{{ custom_server_ssl_key }}"
       foreman::websockets_ssl_cert: "{{ custom_server_ssl_cert }}"
-  pre_tasks:
-    - name: IPA custom ssl certificates
-      command: >
-        ipa-getcert -k {{ custom_server_ssl_key }} -f
   roles:
+    - role: ipa-getcert 
     - role: epel_repositories
     - role: ostree_repositories
     - role: puppet_repositories

@@ -1,6 +1,6 @@
 ---
-# tasks file for ipa-getcert
-- name: register certificate with IPA
+# tasks file for ipa-getcert request
+- name: register {{ item.name }} certificate with IPA
   command: >
     {{ ipa_getcert_cmd }} request
     {{ '-r' if item.renew else '-R' }}
@@ -9,4 +9,9 @@
     -F {{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_ca.pem
   args:
     creates: "{{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_crt.pem"
-  with_items: "{{ ipa_getcert_ssl_certs }}"
+
+- name: set {{ item.name }} certificate fact
+  set_fact:
+    ssl_{{ item.name }}_privatekey: {{ ipa_getcert_ssl_private_dir }}/{{ item.name }}_{{ inventory_hostname }}_key.pem
+    ssl_{{ item.name }}_certificate: {{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_crt.pem
+    ssl_{{ item.name }}_cachain: {{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_ca.pem
