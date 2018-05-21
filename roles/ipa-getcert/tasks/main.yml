@@ -2,4 +2,4 @@
 # tasks file for ipa-getcert
 - name: register certificate with IPA
   include_tasks: ipa-getcert_request.yml
-  with_items: "{{ ipa_getcert_ssl_certs|selectattr("request") }}"
+  with_items: "{{ ipa_getcert_ssl_certs }}"

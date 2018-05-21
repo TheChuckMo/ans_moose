@@ -2,7 +2,7 @@
 # https://github.com/theforeman/forklift
 ---
 - name: Foreman configuration
-  hosts: foreman
+  hosts: foreman.home.moosejudge.com
   gather_facts: yes
   become: yes
   vars:
