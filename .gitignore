@@ -1,2 +1,3 @@
-./foreman/forklift/*
+roles/*
+logs/*
 *.retry
