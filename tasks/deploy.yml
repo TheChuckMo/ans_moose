@@ -1,0 +1,37 @@
+---
+- name: roles directory
+  file:
+    path: "{{ prov_roles }}"
+    state: directory
+    owner: "{{ prov_user }}"
+    group: "{{ prov_group }}"
+    mode: 0755
+
+- name: clone forklift
+  git:
+    accept_hostkey: yes
+    repo: "{{ prov_forklift_repo }}"
+    dest: "{{ prov_forklift }}"
+
+- name: redis setup
+  block:
+  - name: install redis packages
+    yum:
+      name: "{{ redis_pkgs }}"
+      state: present
+
+  - name: enable redis service
+    service:
+      name: redis
+      enabled: yes
+      state: started
+  when: redis_setup
+
+- name: ansible config file
+  file: 
+    name: /etc/ansible/ansible.cfg
+    state: file
+    owner: "{{ prov_user }}"
+    group: "{{ prov_group }}"
+    mode: 0644
+    src: "{{ ansible_cfg }}"

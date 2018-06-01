@@ -3,5 +3,5 @@
   version: develop
   name: foreman-modules
 
-- src: geerlingguy.ntp
-  name: ntp
+  #- src: geerlingguy.ntp
+  #  name: ntp

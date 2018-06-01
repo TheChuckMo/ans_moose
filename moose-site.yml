@@ -12,14 +12,18 @@
 
 - name: deploy setup
   hosts: config
+  vars_files:
+    - vars/deploy.yml
+  tasks:
+    - name: deploy tasks
+      include_tasks:
+        name: tasks/deploy.yml
 
 - name: provision setup
   hosts: provision
-
   vars_files:
-    - vars/foreman.yml
-
+    - vars/provision.yml
   tasks:
-    - name: foreman tasks
+    - name: provision tasks
       include_tasks: 
-        name: tasks/foreman.yml
+        name: tasks/provision.yml
