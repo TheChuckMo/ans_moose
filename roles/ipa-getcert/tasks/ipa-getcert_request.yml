@@ -1,0 +1,20 @@
+---
+# tasks file for ipa-getcert request
+- debug:
+    var: item.values
+
+- command: >
+    {{ ipa_getcert_cmd }} request
+    {{ '-r' if item.renew else '-R' }}
+    -k {{ ipa_getcert_ssl_private_dir }}/{{ item.name }}_{{ inventory_hostname }}_key.pem
+    -f {{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_crt.pem
+    -F {{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_csr.pem
+  args:
+    creates: "{{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_crt.pem"
+
+- name: set {{ item.name }} certificate fact
+  set_fact:
+    ssl_{{ item.name }}_key: "{{ ipa_getcert_ssl_private_dir }}/{{ item.name }}_{{ inventory_hostname }}_key.pem"
+    ssl_{{ item.name }}_crt: "{{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_crt.pem"
+    ssl_{{ item.name }}_csr: "{{ ipa_getcert_ssl_certs_dir }}/{{ item.name }}_{{ inventory_hostname }}_csr.pem"
+    ssl_{{ item.name }}_ca: "{{ ipa_getcert_ssl_ca }}"
