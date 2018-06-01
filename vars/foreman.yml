@@ -1,0 +1,40 @@
+---
+ipa_getcert_name: 'foreman'
+
+katello_repositories_version: 3.6
+foreman_repositories_version: 1.17
+foreman_installer_options:
+  - "--foreman-admin-first-name Admin"
+  - "--foreman-admin-last-name Foreman"
+  - "--foreman-organizations-enabled true"
+  - "--foreman-initial-organization moosejudge"
+  - "--foreman-locations-enabled true"
+  - "--foreman-initial-location home"
+  - "--enable-foreman-plugin-cockpit"
+  - "--enable-foreman-plugin-templates"
+  - "--enable-foreman-plugin-expire-hosts"
+  - "--enable-foreman-plugin-remote-execution"
+foreman_installer_authentication:
+  - "--foreman-ipa-authentication true"
+  - "--foreman-proxy-realm true"
+  - "--foreman-proxy-realm-principal 'realm-proxy@HOME.MOOSEJUDGE.COM'"
+foreman_installer_provision:
+  - "--foreman-proxy-dhcp true"
+  - "--foreman-proxy-dhcp-managed true"
+  - "--foreman-proxy-dhcp-provider isc"
+  - "--foreman-proxy-dhcp-range '10.10.10.100 10.10.10.200'"
+  - "--foreman-proxy-dhcp-interface eth1"
+  - "--foreman-proxy-dhcp-subnets '10.10.10.0/24'"
+  - "--enable-foreman-compute-libvirt" 
+  - "--enable-foreman-compute-gce"
+  - "--foreman-proxy-libvirt-network provision"
+  - "--foreman-proxy-libvirt-connection 'qemu+ssh://vmadmin@hv1.home.moosejudge.com'"
+foreman_installer_config:
+  - "--enable-foreman-plugin-ansible"
+  - "--puppet-server-git-repo true"
+  - "--puppet-autosign-entries '*.home.moosejudge.com'"
+
+#- "--foreman-ssl-cert {{ ssl_foreman_crt }}"
+#- "--foreman-ssl-key {{ ssl_foreman_key }}"
+#- "--foreman-ssl-ca {{ ssl_foreman_ca }}"
+#

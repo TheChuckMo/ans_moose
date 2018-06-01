@@ -9,3 +9,17 @@
   roles:
 
   tasks:
+
+- name: deploy setup
+  hosts: config
+
+- name: provision setup
+  hosts: provision
+
+  vars_files:
+    - vars/foreman.yml
+
+  tasks:
+    - name: foreman tasks
+      include_tasks: 
+        name: tasks/foreman.yml

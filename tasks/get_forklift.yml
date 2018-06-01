@@ -1,15 +1,28 @@
 ---
 - name: get foreman forklift
-  hosts: localhost
-  gather_facts: no
+  hosts: config
 
   vars:
-    forklift_repo: "https://github.com/theforeman/forklift.git"
-    forklift_dir: "{{ lookup('env', 'HOME') }}/Projects/ans_moose/forklift"
+    USER: madmin
+    GROUP: madmin
+
+    BASE_DIR: '/opt/config'
+    ROLES_DIR: "{{ BASE_DIR }}/roles"
+
+    FORKLIFT_REPO: "https://github.com/theforeman/forklift.git"
+    FORKLIFT_DIR: "{{ BASE_DIR }}/forklift"
 
   tasks:
+    - name: roles location
+      file:
+        path: "{{ ROLES_DIR }}"
+        state: directory
+        owner: "{{ USER }}"
+        group: "{{ GROUP }}"
+        mode: 0755
+
     - name: clone forklift
       git:
         accept_hostkey: yes
-        repo: "{{ forklift_repo }}"
-        dest: "{{ forklift_dir }}"
+        repo: "{{ FORKLIFT_REPO }}"
+        dest: "{{ FORKLIFT_DIR }}"
