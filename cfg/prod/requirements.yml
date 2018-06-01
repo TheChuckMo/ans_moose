@@ -1,0 +1,7 @@
+# from GitHub, overriding the name and specifying a specific tag
+- src: https://github.com/TheChuckMo/foreman-ansible-modules.git
+  version: develop
+  name: foreman-modules
+
+- src: geerlingguy.ntp
+  name: ntp
