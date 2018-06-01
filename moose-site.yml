@@ -1,0 +1,11 @@
+---
+- name: moose site file
+  hosts: all
+
+  vars:
+
+  vars_files:
+
+  roles:
+
+  tasks:

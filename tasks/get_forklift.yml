@@ -1,0 +1,15 @@
+---
+- name: get foreman forklift
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    forklift_repo: "https://github.com/theforeman/forklift.git"
+    forklift_dir: "{{ lookup('env', 'HOME') }}/Projects/ans_moose/forklift"
+
+  tasks:
+    - name: clone forklift
+      git:
+        accept_hostkey: yes
+        repo: "{{ forklift_repo }}"
+        dest: "{{ forklift_dir }}"
