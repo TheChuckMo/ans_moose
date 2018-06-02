@@ -1,0 +1,8 @@
+---
+ntp_timezone: America/Los_Angeles
+ntp_enabled: yes
+ntp_manage_config: yes
+
+ex_ntp_area: north-america
+in_ntp_servers:
+  - core.home.moosejudge.com

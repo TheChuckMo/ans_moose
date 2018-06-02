@@ -1,29 +1,36 @@
 ---
-- name: moose site file
-  hosts: all
-
+# global hosts play
+- name: moose site 
+  hosts: hosts
+  become: yes
   vars:
 
   vars_files:
-
-  roles:
-
+    - vars/ntp.yml
   tasks:
+    - name: ntp setup
+      include_tasks: tasks/ntp.yml
+      tags: [ntp]
+  tags: [hosts]
 
+# deployment server
 - name: deploy setup
   hosts: config
+  become: yes
   vars_files:
     - vars/deploy.yml
   tasks:
     - name: deploy tasks
-      include_tasks:
-        name: tasks/deploy.yml
+      include_tasks: tasks/deploy.yml
+  tags: [deploy]
 
+# provision server
 - name: provision setup
   hosts: provision
+  become: yes
   vars_files:
     - vars/provision.yml
   tasks:
     - name: provision tasks
-      include_tasks: 
-        name: tasks/provision.yml
+      include_tasks: tasks/provision.yml
+  tags: [provision]

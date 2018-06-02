@@ -1,17 +1,54 @@
 ---
+- name: base permissions
+  file:
+    name: "{{ deploy_base }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: 0775
+    state: directory
+  tags: [base]
+
+- name: update inventory
+  git: 
+    accept_hostkey: yes
+    repo: "{{ deploy_inv_repo }}"
+    dest: "{{ deploy_inv }}"
+    version: "{{ deploy_inv_branch }}"
+    update: yes
+  become_user: chuck
+  tags: [inventory]
+
 - name: roles directory
   file:
-    path: "{{ prov_roles }}"
+    path: "{{ deploy_roles }}"
     state: directory
-    owner: "{{ prov_user }}"
-    group: "{{ prov_group }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
     mode: 0755
+  tags: [roles]
+
+- name: roles requirements.yml 
+  copy:
+    dest: "{{ deploy_base }}/requirements.yml"
+    src: "files/{{ deploy_env }}/requirements.yml"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+
+- name: install roles
+  command: |
+    ansible-galaxy install {{ '--force' if deploy_roles_force else '' }} 
+    --roles-path {{ deploy_roles }} 
+    --role-file {{ deploy_base }}/requirements.yml
+    --ignore-certs
 
 - name: clone forklift
   git:
     accept_hostkey: yes
-    repo: "{{ prov_forklift_repo }}"
-    dest: "{{ prov_forklift }}"
+    repo: "{{ deploy_forklift_repo }}"
+    dest: "{{ deploy_forklift }}"
+    version: "{{ deploy_forklift_branch }}"
+  become_user: "{{ deploy_user }}"
+  tags: [forklift]
 
 - name: redis setup
   block:
@@ -26,12 +63,14 @@
       enabled: yes
       state: started
   when: redis_setup
+  tags: [redis]
 
 - name: ansible config file
   file: 
     name: /etc/ansible/ansible.cfg
     state: file
-    owner: "{{ prov_user }}"
-    group: "{{ prov_group }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
     mode: 0644
     src: "{{ ansible_cfg }}"
+  tags: [ansible_config]

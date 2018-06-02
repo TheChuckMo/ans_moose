@@ -1,0 +1,14 @@
+---
+- name: ntp client config
+  include_role: 
+    name: ntp
+  vars:
+    ntp_servers: "{{ in_ntp_servers }}"
+  when: not ntp_server
+
+- name: ntp server config
+  include_role:
+    name: ntp
+  vars:
+    ntp_area: "{{ ex_ntp_area }}"
+  when: ntp_server
