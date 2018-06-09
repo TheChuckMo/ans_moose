@@ -95,6 +95,7 @@
     - name: systemd reload
       systemd:
         daemon_reload: yes
+      tags: [HomeAssistant, service, create]
 
     - name: Home Assistant systemd reload
       systemd:
