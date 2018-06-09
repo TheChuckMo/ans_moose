@@ -19,26 +19,25 @@
     hass_service_name: home-assistant
     hass_service_state: started # started/stopped
     hass_service_enabled: yes
-    hass_service_file: "/etc/systemd/system/home-assistant@{{ hass_user }}.service"
+    hass_service_file: "/etc/systemd/system/{{ hass_service_name }}.service"
     hass_service_file_content: |
-                            [Unit]\n
-                            Description=Home Assistant\n
-                            After=network-online.target\n
+                            [Unit]
+                            Description=Home Assistant
+                            After=network-online.target
+
+                            [Service]
+                            Type=simple
+                            User={{ hass_user }}
+                            ExecStart={{ hass_install_directory }}/bin/hass
+
+                            [Install]
+                            WantedBy=multi-user.target
 
 
-                            [Service]\n
-                            Type=simple\n
-                            User=%i\n
-                            ExecStart={{ hass_install_directory }}/bin/hass\n
-
-
-                            [Install]\n
-                            WantedBy=multi-user.target\n
-
-
-    hass_python3: /etc/bin/python3
+    hass_python3: /usr/bin/python3
+    hass_python3_virtualenv_command: pyvenv-3.6
     hass_python3_install: yes
-    hass_python3_packages: [python3, python3-pip, python3-virtualenv]
+    hass_python3_packages: [python3, python3-pip, python3-libselinux, python3-virtualenv]
 
     hass_pip_installs:
       - homeassistant
@@ -79,8 +78,10 @@
       pip:
         name: "{{ hass_pip_installs }}"
         virtualenv: "{{ hass_install_directory }}"
-        virtualenv_python: "{{ hass_python3 }}"
+        virtualenv_command: "{{ hass_python3_virtualenv_command }}"
+        #virtualenv_python: "{{ hass_python3 }}"
       tags: [HomeAssistant, install]
+      become_user: "{{ hass_user }}"
 
     - name: Home Assistant systemd file
       copy:
@@ -91,9 +92,13 @@
         content: "{{ hass_service_file_content }}"
       tags: [HomeAssistant, service, create]
 
+    - name: systemd reload
+      systemd:
+        daemon_reload: yes
+
     - name: Home Assistant systemd reload
       systemd:
-        service: "{{ hass_service_name }}"
+        service: "{{ hass_service_name }}.service"
         daemon_reload: yes
         state: stopped
         enabled: "{{ hass_service_enabled }}"
@@ -103,12 +108,13 @@
       firewalld:
         immediate: yes
         permanent: yes
-        port: 8123/TCP
+        port: 8123/tcp
         state: enabled
+      tags: [HomeAssistant, firewall]
 
     - name: Home Assistant startup settings
       systemd:
-        service: "{{ hass_service_name }}"
+        service: "{{ hass_service_name }}.service"
         state: "{{ hass_service_state }}"
         enabled: "{{ hass_service_enabled }}"
       tags: [HomeAssistant, service, settings]
