@@ -4,7 +4,7 @@
     name: "{{ deploy_base }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_group }}"
-    mode: 0775
+    mode: '2775'
     state: directory
   tags: [base]
 
@@ -15,7 +15,7 @@
     dest: "{{ deploy_inv }}"
     version: "{{ deploy_inv_branch }}"
     update: yes
-  become_user: chuck
+  become_user: "{{ deploy_repo_owner }}"
   tags: [inventory]
 
 - name: roles directory
@@ -24,7 +24,7 @@
     state: directory
     owner: "{{ deploy_user }}"
     group: "{{ deploy_group }}"
-    mode: 0755
+    mode: '2775'
   tags: [roles]
 
 - name: roles requirements.yml 
@@ -41,13 +41,22 @@
     --role-file {{ deploy_base }}/requirements.yml
     --ignore-certs
 
+- name: forklift directory
+  file:
+    path: "{{ deploy_forklift }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: '2775'
+  tags: [forklift]
+
 - name: clone forklift
   git:
     accept_hostkey: yes
     repo: "{{ deploy_forklift_repo }}"
     dest: "{{ deploy_forklift }}"
     version: "{{ deploy_forklift_branch }}"
-  become_user: "{{ deploy_user }}"
+  become_user: "{{ deploy_repo_owner }}"
   tags: [forklift]
 
 - name: redis setup
@@ -71,6 +80,6 @@
     state: file
     owner: "{{ deploy_user }}"
     group: "{{ deploy_group }}"
-    mode: 0644
+    mode: '0664'
     src: "{{ ansible_cfg }}"
   tags: [ansible_config]

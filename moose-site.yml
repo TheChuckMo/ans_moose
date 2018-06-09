@@ -6,11 +6,8 @@
   vars:
 
   vars_files:
-    - vars/ntp.yml
+
   tasks:
-    - name: ntp setup
-      include_tasks: tasks/ntp.yml
-      tags: [ntp]
   tags: [hosts]
 
 # deployment server
@@ -21,7 +18,7 @@
     - vars/deploy.yml
   tasks:
     - name: deploy tasks
-      include_tasks: tasks/deploy.yml
+      import_tasks: tasks/deploy.yml
   tags: [deploy]
 
 # provision server
@@ -32,5 +29,5 @@
     - vars/provision.yml
   tasks:
     - name: provision tasks
-      include_tasks: tasks/provision.yml
+      import_tasks: tasks/provision.yml
   tags: [provision]

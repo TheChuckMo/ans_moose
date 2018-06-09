@@ -13,21 +13,28 @@
     name: foreman_installer
   vars:
     foreman_installer_options: "{{ foreman_installer_config }}"
-  tags: [foreman, install, config]
+  tags: [foreman, config]
 
 - name: foreman-installer authentication
   include_role:
     name: foreman_installer
   vars:
     foreman_installer_options: "{{ foreman_installer_authentication }}"
-  tags: [foreman, install, authentication]
+  tags: [foreman, authentication]
 
-- name: foreman-installer provision
+- name: foreman-installer network
   include_role:
     name: foreman_installer
   vars:
-    foreman_installer_options: "{{ foreman_installer_provision }}"
-  tags: [foreman, install, provision]
+    foreman_installer_options: "{{ foreman_installer_network }}"
+  tags: [foreman, network]
+
+- name: foreman-installer compute
+  include_role:
+    name: foreman_installer
+  vars:
+    foreman_installer_options: "{{ foreman_installer_compute }}"
+  tags: [foreman, compute]
 
 - name: firewall Satellite service
   firewalld:
@@ -44,7 +51,7 @@
     owner: foreman
     group: foreman
     mode: 0700
-  tags: [ssh-key, provision]
+  tags: [ssh-key]
 
 - name: foreman ssh-key create
   user:
@@ -53,21 +60,18 @@
     ssh_key_file: /usr/share/foreman/.ssh/id_rsa
     ssh_key_bits: 2048
     ssh_key_type: rsa
-  tags: [ssh-key, provision]
+  tags: [ssh-key]
 
 - name: get foreman public key
   slurp:
     src: /usr/share/foreman/.ssh/id_rsa.pub
   register: libvirt_sshkey
-  tags: [ssh-key, provision]
-
-- debug: 
-    msg: "ssh key: {{ libvirt_sshkey.content | b64decode }}"
+  tags: [ssh-key]
 
 - name: adding libvirt ssh-key
   authorized_key:
     user: vmadmin
     key: "{{ libvirt_sshkey.content | b64decode }}"
   delegate_to: hv1.home.moosejudge.com
-  tags: [ssh-key, provision]
+  tags: [ssh-key]
     

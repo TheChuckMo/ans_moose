@@ -1,0 +1,116 @@
+---
+# moose home assistant
+- name: moose hass 
+  hosts: hass
+  become: yes
+  vars:
+    hass_user: hass 
+    hass_group: hass
+
+    hass_install_directory: /opt/home-assistant
+
+    hass_ssh_key: yes
+    hass_ssh_key_type: rsa
+    hass_ssh_key_bits: 2048
+
+    hass_ssh_key_comment: |
+      "{{ hass_user }}@{{ ansible_hostname }} Home Assistant"
+
+    hass_service_name: home-assistant
+    hass_service_state: started # started/stopped
+    hass_service_enabled: yes
+    hass_service_file: "/etc/systemd/system/home-assistant@{{ hass_user }}.service"
+    hass_service_file_content: |
+                            [Unit]\n
+                            Description=Home Assistant\n
+                            After=network-online.target\n
+
+
+                            [Service]\n
+                            Type=simple\n
+                            User=%i\n
+                            ExecStart={{ hass_install_directory }}/bin/hass\n
+
+
+                            [Install]\n
+                            WantedBy=multi-user.target\n
+
+
+    hass_python3: /etc/bin/python3
+    hass_python3_install: yes
+    hass_python3_packages: [python3, python3-pip, python3-virtualenv]
+
+    hass_pip_installs:
+      - homeassistant
+      - colorlog
+
+  vars_files:
+
+  tasks:
+    - name: hass install group
+      group:
+        name: "{{ hass_group }}"
+        gid:
+        state: present
+      tags: [group, user]
+
+    - name: hass intsall user
+      user:
+        name: "{{ hass_user }}"
+        uid:
+        group: "{{ hass_group }}"
+        create_home: yes
+        home: "{{ hass_install_directory }}"
+        generate_ssh_key: "{{ hass_ssh_key }}"
+        ssh_key_type: "{{ hass_ssh_key_type }}"
+        ssh_key_bits: "{{ hass_ssh_key_bits }}"
+        ssh_key_comment: "{{ hass_ssh_key_comment }}"
+        state: present
+      tags: [user, directory]
+         
+    - name: hass python3 install
+      package:
+        name: "{{ hass_python3_packages }}"
+        state: present
+      when: hass_python3_install
+      tags: [python3, install]
+
+    - name: Home Assistant install
+      pip:
+        name: "{{ hass_pip_installs }}"
+        virtualenv: "{{ hass_install_directory }}"
+        virtualenv_python: "{{ hass_python3 }}"
+      tags: [HomeAssistant, install]
+
+    - name: Home Assistant systemd file
+      copy:
+        dest: "{{ hass_service_file }}"
+        owner: "{{ hass_user }}"
+        mode: 0664
+        group: "{{ hass_group }}"
+        content: "{{ hass_service_file_content }}"
+      tags: [HomeAssistant, service, create]
+
+    - name: Home Assistant systemd reload
+      systemd:
+        service: "{{ hass_service_name }}"
+        daemon_reload: yes
+        state: stopped
+        enabled: "{{ hass_service_enabled }}"
+      tags: [HomeAssistant, service, create]
+
+    - name: Home Assistant firewalld
+      firewalld:
+        immediate: yes
+        permanent: yes
+        port: 8123/TCP
+        state: enabled
+
+    - name: Home Assistant startup settings
+      systemd:
+        service: "{{ hass_service_name }}"
+        state: "{{ hass_service_state }}"
+        enabled: "{{ hass_service_enabled }}"
+      tags: [HomeAssistant, service, settings]
+
+

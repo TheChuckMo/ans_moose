@@ -6,7 +6,8 @@ redis_setup: yes
 redis_pkgs: [redis, python-redis]
 
 deploy_user: madmin
-deploy_group: madmin
+deploy_group: conmoose
+deploy_repo_owner: chuck
 
 deploy_base: '/opt/config'
 
@@ -15,14 +16,14 @@ deploy_roles_reqfile: "files/{{ deploy_env }}/requirements.yml"
 deploy_roles_force: no
 
 deploy_inv: "{{ deploy_base }}/inventory"
-deploy_inv_repo: "gitosis@deploy:moose_inventory"
+deploy_inv_repo: 'gitosis@deploy:moose_inventory'
 deploy_inv_branch: master
 
 deploy_secrets: "{{ deploy_secrets }}/secrets"
-deploy_secrets_repo: "gitosis@deploy:moose_secrets"
+deploy_secrets_repo: 'gitosis@deploy:moose_secrets'
 deploy_secrets_branch: master
 
 deploy_forklift: "{{ deploy_base }}/forklift"
-deploy_forklift_repo: "https://github.com/theforeman/forklift.git"
+deploy_forklift_repo: 'https://github.com/theforeman/forklift.git'
 deploy_forklift_branch: master
 
