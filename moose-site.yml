@@ -12,7 +12,7 @@
 
 # deployment server
 - name: deploy setup
-  hosts: config
+  hosts: config:provision
   become: yes
   vars_files:
     - vars/deploy.yml

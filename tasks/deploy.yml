@@ -74,12 +74,29 @@
   when: redis_setup
   tags: [redis]
 
-- name: ansible config file
-  file: 
-    name: /etc/ansible/ansible.cfg
-    state: file
+- name: ansible vault
+  file:
+    state: directory
+    path: "{{ ansible_vault }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: '0775'
+  tags: [vaultid]
+
+- name: ansible vault id
+  copy:
+    dest: "{{ ansible_vault_file }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_group }}"
     mode: '0664'
-    src: "{{ ansible_cfg }}"
+    content: "{{ deploy_secret | password_hash('sha512', 65534|random(seed=inventory_hostname)|string) }}"
+  tags: [vaultid]
+
+- name: ansible config file
+  copy: 
+    dest: /etc/ansible/ansible.cfg
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: '0664'
+    content: "{{ lookup('file', ansible_cfg) }}"
   tags: [ansible_config]

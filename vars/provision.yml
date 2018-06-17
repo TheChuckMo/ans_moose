@@ -1,6 +1,9 @@
 ---
 ipa_getcert_name: 'foreman'
 
+foreman_firewall_services: [ssh, puppetmaster, http, https, tftp]
+foreman_firewall_ports: ['8000/tcp', '8140/tcp', '67/udp', '69/udp']
+
 katello_repositories_version: 3.6
 foreman_repositories_version: 1.17
 foreman_installer_options:
@@ -14,6 +17,7 @@ foreman_installer_options:
   - "--enable-foreman-plugin-templates"
   - "--enable-foreman-plugin-expire-hosts"
   - "--enable-foreman-plugin-remote-execution"
+  - "--enable-foreman-proxy-plugin-remote-execution-ssh"
 foreman_installer_authentication:
   - "--foreman-ipa-authentication true"
   - "--foreman-proxy-freeipa-remove-dns true"
@@ -22,26 +26,24 @@ foreman_installer_authentication:
   - "--foreman-proxy-realm-principal 'realm-foreman@HOME.MOOSEJUDGE.COM'"
   - "--foreman-proxy-realm-keytab /etc/foreman-proxy/freeipa.keytab"
 foreman_installer_network:
-  - "--enable-foreman-proxy-plugin-dhcp-remote-isc"
-#  - "--foreman-proxy-dhcp true"
-#  - "--foreman-proxy-dhcp-managed true"
-#  - "--foreman-proxy-dhcp-gateway 10.10.10.1"
-#  - "--foreman-proxy-dhcp-nameservers 10.10.10.2"
-#  - "--foreman-proxy-dhcp-range '10.10.10.100 10.10.10.200'"
-#  - "--foreman-proxy-dhcp-interface eth1"
-#  - "--foreman-proxy-dhcp-subnets 10.10.10.0"
-#  - "--foreman-proxy-dhcp-subnets 10.10.10.0"
-#  - "--foreman-proxy-dhcp-netmask 255.255.255.0"
-#  - "--foreman-proxy-dns true"
-#  - "--foreman-proxy-dns-forwarders 192.168.0.25"
-#  - "--foreman-proxy-dns-interface eth1"
-#  - "--foreman-proxy-dns-managed true"
-#  - "--foreman-proxy-dns-zone prv.home.moosejudge.com"
+  - "--foreman-proxy-dhcp true"
+  - "--enable-foreman-plugin-dhcp-browser"
+  - "--foreman-proxy-dhcp-server 127.0.0.1"
+  - "--foreman-proxy-dhcp-provider isc"
+  - "--foreman-proxy-dhcp-managed true"
+  - "--foreman-proxy-dhcp-search-domains home.moosejudge.com"
+  - "--foreman-proxy-dhcp-gateway 192.168.50.1"
+  - "--foreman-proxy-dhcp-nameservers 192.168.50.75"
+  - "--foreman-proxy-dhcp-range '192.168.50.150 192.168.50.200'"
+  - "--foreman-proxy-dhcp-subnets 192.168.50.0"
+  - "--foreman-proxy-dhcp-netmask 255.255.255.0"
 foreman_installer_compute:
   - "--enable-foreman-compute-libvirt" 
   - "--enable-foreman-compute-gce"
   - "--foreman-proxy-libvirt-network provision"
-  - "--foreman-proxy-libvirt-connection 'qemu+ssh://vmadmin@hv1.home.moosejudge.com'"
+  - "--foreman-proxy-libvirt-connection 'qemu+ssh://vmadmin@hv1.home.moosejudge.com/system'"
+  - "--enable-foreman-plugin-docker"
+  - "--enable-foreman-plugin-digitalocean"
 foreman_installer_config:
   - "--enable-foreman-plugin-ansible"
   - "--puppet-server-git-repo true"

@@ -1,0 +1,46 @@
+---
+- name: Playbook 1
+  hosts: PlaybookHosts
+#  gather_facts: smart
+#  remote_user: madmin
+#  become: yes
+#  become_user: root
+  vars:
+    var1: value1
+#    vardict:
+#      verify: yes
+#      option: 40
+#    varlist: [bod, ted, tonny, samantha]
+#    varlistdict:
+#      - { name: common, location: portland, install: yes }
+#      - { name: uncommon, location: louisville, install: no }
+#  vars_files:
+#    # always include
+#    - vars/environment.yml
+#
+#    # include first found
+#    - ["vars/{{ first_found_file }}", vars/default.yml]
+#  
+#  vars_prompts:
+#    - name: app_password
+#      prompt: "Enter App Password"
+#      default: "not-secret-default"
+#      private: yes
+#      confirm: yes
+#  tags: [tag1, tag2]
+#  pre_tasks:
+#    - pre_task1
+#  roles:
+#    - role1
+#    - { name: role2, rolevar: value }
+  tasks:
+    - task_1
+#  post_tasks:
+#    - post_task1
+#  handlers:
+#    - handler1
+---
+- name: Playbook 2
+  hosts: all
+  tasks:
+    - play2_task1

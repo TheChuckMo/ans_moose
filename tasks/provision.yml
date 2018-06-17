@@ -36,12 +36,22 @@
     foreman_installer_options: "{{ foreman_installer_compute }}"
   tags: [foreman, compute]
 
-- name: firewall Satellite service
-  firewalld:
-    immediate: yes
-    permanent: yes
-    service: RH-Satellite-6
-    state: enabled
+- name: firewalld Satellite
+  block:
+    - name: firewalld services
+      firewalld:
+        immediate: yes
+        permanent: yes
+        state: enabled
+        service: "{{ item }}"
+      with_items: "{{ foreman_firewall_services }}"
+    - name: firewalld ports
+      firewalld:
+        immediate: yes
+        permanent: yes
+        state: enabled
+        port: "{{ item }}"
+      with_items: "{{ foreman_firewall_ports }}"
   tags: [firewall]
 
 - name: foreman ssh-key prep
@@ -74,4 +84,9 @@
     key: "{{ libvirt_sshkey.content | b64decode }}"
   delegate_to: hv1.home.moosejudge.com
   tags: [ssh-key]
-    
+   
+- name: ansible packages
+  package:
+    name: [ansible, ansible-doc, ansible-review]
+    state: installed
+  tags: [ansible]

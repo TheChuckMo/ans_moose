@@ -2,11 +2,15 @@
 deploy_env: prod
 ansible_cfg: "files/{{ deploy_env }}/ansible.cfg"
 
+ansible_vault: "{{ deploy_base }}/vaultid" 
+ansible_vault_file: "{{ ansible_vault }}/mj_vault" 
+
 redis_setup: yes
 redis_pkgs: [redis, python-redis]
 
 deploy_user: madmin
 deploy_group: conmoose
+deploy_secret: Super8Secret9Moose1Key2To3The4Hash
 deploy_repo_owner: chuck
 
 deploy_base: '/opt/config'
